@@ -16,23 +16,29 @@
  */
 package org.apache.dubbo.registry.xds.util;
 
+import istio.extensions.v1alpha1.ServiceNameMappingOuterClass;
 import org.apache.dubbo.common.URL;
+import org.apache.dubbo.common.logger.ErrorTypeAwareLogger;
+import org.apache.dubbo.common.logger.LoggerFactory;
 import org.apache.dubbo.common.utils.CollectionUtils;
 import org.apache.dubbo.common.utils.ConcurrentHashSet;
+import org.apache.dubbo.common.utils.JsonUtils;
+import org.apache.dubbo.registry.xds.XdsServiceDiscovery;
 import org.apache.dubbo.registry.xds.util.protocol.impl.EdsProtocol;
 import org.apache.dubbo.registry.xds.util.protocol.impl.LdsProtocol;
 import org.apache.dubbo.registry.xds.util.protocol.impl.RdsProtocol;
+import org.apache.dubbo.registry.xds.util.protocol.impl.SnpProtocol;
 import org.apache.dubbo.registry.xds.util.protocol.message.Endpoint;
 import org.apache.dubbo.registry.xds.util.protocol.message.EndpointResult;
 import org.apache.dubbo.registry.xds.util.protocol.message.ListenerResult;
 import org.apache.dubbo.registry.xds.util.protocol.message.RouteResult;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
+
+import static org.apache.dubbo.common.constants.LoggerCodeConstants.REGISTRY_ERROR_REQUEST_XDS;
 
 public class PilotExchanger {
 
@@ -41,6 +47,8 @@ public class PilotExchanger {
     private final RdsProtocol rdsProtocol;
 
     private final EdsProtocol edsProtocol;
+
+    private final SnpProtocol snpProtocol;
 
     private ListenerResult listenerResult;
 
@@ -52,6 +60,9 @@ public class PilotExchanger {
 
     private final Map<String, Set<Consumer<Set<Endpoint>>>> domainObserveConsumer = new ConcurrentHashMap<>();
 
+    private static final ErrorTypeAwareLogger logger = LoggerFactory.getErrorTypeAwareLogger(PilotExchanger.class);
+
+
     private PilotExchanger(URL url) {
         xdsChannel = new XdsChannel(url);
         int pollingPoolSize = url.getParameter("pollingPoolSize", 10);
@@ -59,6 +70,10 @@ public class PilotExchanger {
         LdsProtocol ldsProtocol = new LdsProtocol(xdsChannel, NodeBuilder.build(), pollingPoolSize, pollingTimeout);
         this.rdsProtocol = new RdsProtocol(xdsChannel, NodeBuilder.build(), pollingPoolSize, pollingTimeout);
         this.edsProtocol = new EdsProtocol(xdsChannel, NodeBuilder.build(), pollingPoolSize, pollingTimeout);
+        this.snpProtocol = new SnpProtocol(xdsChannel, NodeBuilder.build(), pollingPoolSize, pollingTimeout);
+        List<ServiceNameMappingOuterClass.ServiceNameMapping> resource = snpProtocol.getResource(new HashSet<>(Arrays.asList(url.getServiceInterface())));
+        logger.warn(REGISTRY_ERROR_REQUEST_XDS, "", "", JsonUtils.getJson().toJson(resource));
+
 
         this.listenerResult = ldsProtocol.getListeners();
         this.routeResult = rdsProtocol.getResource(listenerResult.getRouteConfigNames());
