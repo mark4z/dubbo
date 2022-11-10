@@ -18,11 +18,13 @@ package org.apache.dubbo.registry.xds.util;
 
 import istio.extensions.v1alpha1.ServiceNameMappingOuterClass;
 import org.apache.dubbo.common.URL;
+import org.apache.dubbo.common.constants.RegistryConstants;
 import org.apache.dubbo.common.logger.ErrorTypeAwareLogger;
 import org.apache.dubbo.common.logger.LoggerFactory;
 import org.apache.dubbo.common.utils.CollectionUtils;
 import org.apache.dubbo.common.utils.ConcurrentHashSet;
 import org.apache.dubbo.common.utils.JsonUtils;
+import org.apache.dubbo.common.utils.StringUtils;
 import org.apache.dubbo.registry.xds.XdsServiceDiscovery;
 import org.apache.dubbo.registry.xds.util.protocol.impl.EdsProtocol;
 import org.apache.dubbo.registry.xds.util.protocol.impl.LdsProtocol;
@@ -72,8 +74,10 @@ public class PilotExchanger {
         this.edsProtocol = new EdsProtocol(xdsChannel, NodeBuilder.build(), pollingPoolSize, pollingTimeout);
         this.snpProtocol = new SnpProtocol(xdsChannel, NodeBuilder.build(), pollingPoolSize, pollingTimeout);
         List<ServiceNameMappingOuterClass.ServiceNameMapping> resource = snpProtocol.getResource(new HashSet<>(Arrays.asList(url.getServiceInterface())));
-        logger.warn(REGISTRY_ERROR_REQUEST_XDS, "", "", JsonUtils.getJson().toJson(resource));
-
+        logger.warn(REGISTRY_ERROR_REQUEST_XDS, "snp-----------", "", JsonUtils.getJson().toJson(resource));
+        if (!resource.isEmpty()){
+            url.addParameter(RegistryConstants.PROVIDED_BY, StringUtils.join(resource.get(0).getApplicationNamesList(), ","));
+        }
 
         this.listenerResult = ldsProtocol.getListeners();
         this.routeResult = rdsProtocol.getResource(listenerResult.getRouteConfigNames());
