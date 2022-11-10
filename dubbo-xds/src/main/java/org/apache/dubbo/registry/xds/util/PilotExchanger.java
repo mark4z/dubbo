@@ -74,9 +74,9 @@ public class PilotExchanger {
         this.edsProtocol = new EdsProtocol(xdsChannel, NodeBuilder.build(), pollingPoolSize, pollingTimeout);
         this.snpProtocol = new SnpProtocol(xdsChannel, NodeBuilder.build(), pollingPoolSize, pollingTimeout);
         List<ServiceNameMappingOuterClass.ServiceNameMapping> resource = snpProtocol.getResource(new HashSet<>(Arrays.asList(url.getServiceInterface())));
-        logger.warn(REGISTRY_ERROR_REQUEST_XDS, "snp-----------", "", JsonUtils.getJson().toJson(resource));
-        if (!resource.isEmpty()){
-            url.addParameter(RegistryConstants.PROVIDED_BY, StringUtils.join(resource.get(0).getApplicationNamesList(), ","));
+        logger.warn(REGISTRY_ERROR_REQUEST_XDS, "snp-----------", "", url.getServiceInterface() + "-" + JsonUtils.getJson().toJson(resource));
+        if (!resource.isEmpty()) {
+            url.putAttribute(RegistryConstants.PROVIDED_BY, StringUtils.join(resource.get(0).getApplicationNamesList(), ","));
         }
 
         this.listenerResult = ldsProtocol.getListeners();
