@@ -90,7 +90,7 @@ public abstract class AbstractServiceNameMapping implements ServiceNameMapping {
      *
      * @return
      */
-    abstract public Set<String> getAndListen(URL url, MappingListener mappingListener, URL registryUrl);
+    abstract public Set<String> getAndListen(Object serviceDiscovery, URL url, MappingListener mappingListener, URL registryUrl);
 
     abstract protected void removeListener(URL url, MappingListener mappingListener);
 
@@ -122,7 +122,7 @@ public abstract class AbstractServiceNameMapping implements ServiceNameMapping {
     }
 
     @Override
-    public Set<String> getAndListen(URL registryURL, URL subscribedURL, MappingListener listener) {
+    public Set<String> getAndListen(URL registryURL, URL subscribedURL, MappingListener listener, Object serviceDiscovery) {
         String key = ServiceNameMapping.buildMappingKey(subscribedURL);
         // use previously cached services.
         Set<String> mappingServices = this.getCachedMapping(key);
@@ -131,7 +131,7 @@ public abstract class AbstractServiceNameMapping implements ServiceNameMapping {
         if (CollectionUtils.isEmpty(mappingServices)) {
             try {
                 logger.info("Local cache mapping is empty!!!");
-                mappingServices = (new AsyncMappingTask(registryURL, listener, subscribedURL, false)).call();
+                mappingServices = (new AsyncMappingTask(registryURL, listener, subscribedURL, false, serviceDiscovery)).call();
             } catch (Exception e) {
                 // ignore
             }
@@ -148,7 +148,7 @@ public abstract class AbstractServiceNameMapping implements ServiceNameMapping {
         } else {
             ExecutorService executorService = applicationModel.getFrameworkModel().getBeanFactory()
                 .getBean(FrameworkExecutorRepository.class).getMappingRefreshingExecutor();
-            executorService.submit(new AsyncMappingTask(registryURL, listener, subscribedURL, true));
+            executorService.submit(new AsyncMappingTask(registryURL, listener, subscribedURL, true, serviceDiscovery));
         }
 
         return mappingServices;
@@ -265,11 +265,14 @@ public abstract class AbstractServiceNameMapping implements ServiceNameMapping {
         private final URL registryURL;
         private final boolean notifyAtFirstTime;
 
-        public AsyncMappingTask(URL registryURL, MappingListener listener, URL subscribedURL, boolean notifyAtFirstTime) {
+        private final Object serviceDiscovery;
+
+        public AsyncMappingTask(URL registryURL, MappingListener listener, URL subscribedURL, boolean notifyAtFirstTime, Object serviceDiscovery) {
             this.listener = listener;
             this.subscribedURL = subscribedURL;
             this.notifyAtFirstTime = notifyAtFirstTime;
             this.registryURL = registryURL;
+            this.serviceDiscovery = serviceDiscovery;
         }
 
         @Override
@@ -279,7 +282,7 @@ public abstract class AbstractServiceNameMapping implements ServiceNameMapping {
                 try {
                     String mappingKey = ServiceNameMapping.buildMappingKey(subscribedURL);
                     if (listener != null) {
-                        mappedServices = toTreeSet(getAndListen(subscribedURL, listener, registryURL));
+                        mappedServices = toTreeSet(getAndListen(serviceDiscovery,subscribedURL, listener, registryURL));
                         Set<MappingListener> listeners = mappingListeners.computeIfAbsent(mappingKey, _k -> new HashSet<>());
                         listeners.add(listener);
                         if (CollectionUtils.isNotEmpty(mappedServices)) {

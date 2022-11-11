@@ -101,10 +101,11 @@ public interface ServiceNameMapping extends Destroyable {
     /**
      * Get the latest mapping result from remote center and register listener at the same time to get notified once mapping changes.
      *
-     * @param listener listener that will be notified on mapping change
+     * @param listener         listener that will be notified on mapping change
+     * @param serviceDiscovery
      * @return the latest mapping result from remote center
      */
-    Set<String> getAndListen(URL registryURL, URL subscribedURL, MappingListener listener);
+    Set<String> getAndListen(URL registryURL, URL subscribedURL, MappingListener listener, Object serviceDiscovery);
 
     MappingListener stopListen(URL subscribeURL, MappingListener listener);
 
