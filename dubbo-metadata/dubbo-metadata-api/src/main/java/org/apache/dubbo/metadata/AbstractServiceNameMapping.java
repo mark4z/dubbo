@@ -130,7 +130,7 @@ public abstract class AbstractServiceNameMapping implements ServiceNameMapping {
         // Asynchronously register listener in case previous cache does not exist or cache expired.
         if (CollectionUtils.isEmpty(mappingServices)) {
             try {
-                logger.info("Local cache mapping is empty");
+                logger.info("Local cache mapping is empty!!!");
                 mappingServices = (new AsyncMappingTask(listener, subscribedURL, false)).call();
             } catch (Exception e) {
                 // ignore
