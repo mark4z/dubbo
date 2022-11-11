@@ -97,4 +97,15 @@ public class XdsServiceDiscovery extends ReflectionBasedServiceDiscovery {
         instances.sort(Comparator.comparingInt(ServiceInstance::hashCode));
         return instances;
     }
+
+    @Override
+    public void map(URL url) {
+        super.map(url);
+    }
+
+    @Override
+    public List<String> snp(URL url) {
+        List<String> snp = exchanger.snp(url);
+        return snp;
+    }
 }

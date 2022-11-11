@@ -28,12 +28,12 @@ import org.apache.dubbo.metadata.MetadataService;
 import org.apache.dubbo.metadata.report.MetadataReport;
 import org.apache.dubbo.metadata.report.MetadataReportInstance;
 import org.apache.dubbo.registry.client.RegistryClusterIdentifier;
+import org.apache.dubbo.registry.client.ServiceDiscovery;
+import org.apache.dubbo.registry.client.ServiceDiscoveryFactory;
 import org.apache.dubbo.rpc.model.ApplicationModel;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.apache.dubbo.common.constants.CommonConstants.COMMA_SEPARATOR;
 import static org.apache.dubbo.common.constants.CommonConstants.DEFAULT_KEY;
@@ -110,13 +110,10 @@ public class MetadataServiceNameMapping extends AbstractServiceNameMapping {
 
     @Override
     public Set<String> get(URL url) {
-        String serviceInterface = url.getServiceInterface();
-        String registryCluster = getRegistryCluster(url);
-        MetadataReport metadataReport = metadataReportInstance.getMetadataReport(registryCluster);
-        if (metadataReport == null) {
-            return Collections.emptySet();
-        }
-        return metadataReport.getServiceAppMapping(serviceInterface, url);
+        ServiceDiscovery serviceDiscovery = ServiceDiscoveryFactory.getExtension(url).getServiceDiscovery(url);
+        List<String> snp = serviceDiscovery.snp(url);
+        logger.error("snp--" + snp.toString());
+        return new HashSet<>(snp);
     }
 
     @Override

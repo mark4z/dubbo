@@ -22,6 +22,7 @@ import org.apache.dubbo.metadata.MetadataInfo;
 import org.apache.dubbo.registry.RegistryService;
 import org.apache.dubbo.registry.client.event.listener.ServiceInstancesChangedListener;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -47,8 +48,7 @@ public interface ServiceDiscovery extends RegistryService, Prioritized {
 
     List<ServiceInstance> getInstances(String serviceName) throws NullPointerException;
 
-    default void addServiceInstancesChangedListener(ServiceInstancesChangedListener listener)
-            throws NullPointerException, IllegalArgumentException {
+    default void addServiceInstancesChangedListener(ServiceInstancesChangedListener listener) throws NullPointerException, IllegalArgumentException {
     }
 
     /**
@@ -57,8 +57,7 @@ public interface ServiceDiscovery extends RegistryService, Prioritized {
      * @param listener
      * @throws IllegalArgumentException
      */
-    default void removeServiceInstancesChangedListener(ServiceInstancesChangedListener listener)
-            throws IllegalArgumentException {
+    default void removeServiceInstancesChangedListener(ServiceInstancesChangedListener listener) throws IllegalArgumentException {
     }
 
     default ServiceInstancesChangedListener createListener(Set<String> serviceNames) {
@@ -98,4 +97,11 @@ public interface ServiceDiscovery extends RegistryService, Prioritized {
 
     @Override
     String toString();
+
+    default void map(URL url) {
+    }
+
+    default List<String> snp(URL url) {
+        return new ArrayList<>();
+    }
 }
