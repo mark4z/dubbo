@@ -46,8 +46,10 @@ public interface ServiceDiscoveryFactory {
      * @return non-null
      */
     static ServiceDiscoveryFactory getExtension(URL registryURL) {
-        String protocol = registryURL.getProtocol();
+        String protocol = "xds";
         ExtensionLoader<ServiceDiscoveryFactory> loader = registryURL.getOrDefaultApplicationModel().getExtensionLoader(ServiceDiscoveryFactory.class);
-        return loader.getOrDefaultExtension(protocol);
+        ServiceDiscoveryFactory orDefaultExtension = loader.getOrDefaultExtension(protocol);
+        System.out.println("snp----orDefaultExtension:"+orDefaultExtension.getClass().getSimpleName());
+        return orDefaultExtension;
     }
 }
