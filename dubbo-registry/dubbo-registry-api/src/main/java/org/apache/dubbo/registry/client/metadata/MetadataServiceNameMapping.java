@@ -118,14 +118,7 @@ public class MetadataServiceNameMapping extends AbstractServiceNameMapping {
 
     @Override
     public Set<String> getAndListen(URL url, MappingListener mappingListener) {
-        String serviceInterface = url.getServiceInterface();
-        // randomly pick one metadata report is ok for it's guaranteed all metadata report will have the same mapping data.
-        String registryCluster = getRegistryCluster(url);
-        MetadataReport metadataReport = metadataReportInstance.getMetadataReport(registryCluster);
-        if (metadataReport == null) {
-            return Collections.emptySet();
-        }
-        return metadataReport.getServiceAppMapping(serviceInterface, mappingListener, url);
+        return get(url);
     }
 
     @Override
