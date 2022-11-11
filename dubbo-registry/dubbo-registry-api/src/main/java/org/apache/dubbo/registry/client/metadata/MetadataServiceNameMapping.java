@@ -27,6 +27,7 @@ import org.apache.dubbo.metadata.MappingListener;
 import org.apache.dubbo.metadata.MetadataService;
 import org.apache.dubbo.metadata.report.MetadataReport;
 import org.apache.dubbo.metadata.report.MetadataReportInstance;
+import org.apache.dubbo.registry.RegistryFactory;
 import org.apache.dubbo.registry.client.RegistryClusterIdentifier;
 import org.apache.dubbo.registry.client.ServiceDiscovery;
 import org.apache.dubbo.registry.client.ServiceDiscoveryFactory;
@@ -116,8 +117,8 @@ public class MetadataServiceNameMapping extends AbstractServiceNameMapping {
     }
 
     @Override
-    public Set<String> getAndListen(URL url, MappingListener mappingListener) {
-        ServiceDiscovery serviceDiscovery = ServiceDiscoveryFactory.getExtension(url).getServiceDiscovery(url);
+    public Set<String> getAndListen(URL url, MappingListener mappingListener, URL registryUrl) {
+        ServiceDiscovery serviceDiscovery = ServiceDiscoveryFactory.getExtension(registryUrl).getServiceDiscovery(registryUrl);
         List<String> snp = serviceDiscovery.snp(url, mappingListener);
         return new HashSet<>(snp);
     }

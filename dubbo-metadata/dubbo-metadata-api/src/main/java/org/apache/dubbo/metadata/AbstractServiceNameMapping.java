@@ -90,7 +90,7 @@ public abstract class AbstractServiceNameMapping implements ServiceNameMapping {
      *
      * @return
      */
-    abstract public Set<String> getAndListen(URL url, MappingListener mappingListener);
+    abstract public Set<String> getAndListen(URL url, MappingListener mappingListener, URL registryUrl);
 
     abstract protected void removeListener(URL url, MappingListener mappingListener);
 
@@ -131,7 +131,7 @@ public abstract class AbstractServiceNameMapping implements ServiceNameMapping {
         if (CollectionUtils.isEmpty(mappingServices)) {
             try {
                 logger.info("Local cache mapping is empty!!!");
-                mappingServices = (new AsyncMappingTask(listener, subscribedURL, false)).call();
+                mappingServices = (new AsyncMappingTask(registryURL, listener, subscribedURL, false)).call();
             } catch (Exception e) {
                 // ignore
             }
@@ -148,7 +148,7 @@ public abstract class AbstractServiceNameMapping implements ServiceNameMapping {
         } else {
             ExecutorService executorService = applicationModel.getFrameworkModel().getBeanFactory()
                 .getBean(FrameworkExecutorRepository.class).getMappingRefreshingExecutor();
-            executorService.submit(new AsyncMappingTask(listener, subscribedURL, true));
+            executorService.submit(new AsyncMappingTask(registryURL, listener, subscribedURL, true));
         }
 
         return mappingServices;
@@ -262,12 +262,14 @@ public abstract class AbstractServiceNameMapping implements ServiceNameMapping {
     private class AsyncMappingTask implements Callable<Set<String>> {
         private final MappingListener listener;
         private final URL subscribedURL;
+        private final URL registryURL;
         private final boolean notifyAtFirstTime;
 
-        public AsyncMappingTask(MappingListener listener, URL subscribedURL, boolean notifyAtFirstTime) {
+        public AsyncMappingTask(URL registryURL, MappingListener listener, URL subscribedURL, boolean notifyAtFirstTime) {
             this.listener = listener;
             this.subscribedURL = subscribedURL;
             this.notifyAtFirstTime = notifyAtFirstTime;
+            this.registryURL = registryURL;
         }
 
         @Override
@@ -277,7 +279,7 @@ public abstract class AbstractServiceNameMapping implements ServiceNameMapping {
                 try {
                     String mappingKey = ServiceNameMapping.buildMappingKey(subscribedURL);
                     if (listener != null) {
-                        mappedServices = toTreeSet(getAndListen(subscribedURL, listener));
+                        mappedServices = toTreeSet(getAndListen(subscribedURL, listener, registryURL));
                         Set<MappingListener> listeners = mappingListeners.computeIfAbsent(mappingKey, _k -> new HashSet<>());
                         listeners.add(listener);
                         if (CollectionUtils.isNotEmpty(mappedServices)) {

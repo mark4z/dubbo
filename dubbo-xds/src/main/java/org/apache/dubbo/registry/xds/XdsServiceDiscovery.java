@@ -103,10 +103,6 @@ public class XdsServiceDiscovery extends ReflectionBasedServiceDiscovery {
     @Override
     public List<String> snp(URL url, MappingListener mappingListener) {
         System.out.println("snp----:xdssd:"+url.getServiceInterface());
-        if (exchanger == null){
-            System.out.println("snp---- exchanger not init");
-            return Collections.emptyList();
-        }
         List<String> snp = exchanger.snp(url, mappingListener);
         return snp;
     }
