@@ -33,7 +33,6 @@ import org.apache.dubbo.registry.client.ServiceDiscoveryFactory;
 import org.apache.dubbo.rpc.model.ApplicationModel;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.apache.dubbo.common.constants.CommonConstants.COMMA_SEPARATOR;
 import static org.apache.dubbo.common.constants.CommonConstants.DEFAULT_KEY;
@@ -111,14 +110,16 @@ public class MetadataServiceNameMapping extends AbstractServiceNameMapping {
     @Override
     public Set<String> get(URL url) {
         ServiceDiscovery serviceDiscovery = ServiceDiscoveryFactory.getExtension(url).getServiceDiscovery(url);
-        List<String> snp = serviceDiscovery.snp(url);
+        List<String> snp = serviceDiscovery.snp(url, null);
         logger.error("snp--" + snp.toString());
         return new HashSet<>(snp);
     }
 
     @Override
     public Set<String> getAndListen(URL url, MappingListener mappingListener) {
-        return get(url);
+        ServiceDiscovery serviceDiscovery = ServiceDiscoveryFactory.getExtension(url).getServiceDiscovery(url);
+        List<String> snp = serviceDiscovery.snp(url, mappingListener);
+        return new HashSet<>(snp);
     }
 
     @Override

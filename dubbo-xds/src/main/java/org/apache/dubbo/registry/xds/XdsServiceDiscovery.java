@@ -19,6 +19,7 @@ package org.apache.dubbo.registry.xds;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.logger.ErrorTypeAwareLogger;
 import org.apache.dubbo.common.logger.LoggerFactory;
+import org.apache.dubbo.metadata.MappingListener;
 import org.apache.dubbo.registry.client.DefaultServiceInstance;
 import org.apache.dubbo.registry.client.ReflectionBasedServiceDiscovery;
 import org.apache.dubbo.registry.client.ServiceInstance;
@@ -28,11 +29,7 @@ import org.apache.dubbo.registry.xds.util.protocol.message.Endpoint;
 import org.apache.dubbo.rpc.model.ApplicationModel;
 import org.apache.dubbo.rpc.model.ScopeModelUtil;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.apache.dubbo.common.constants.LoggerCodeConstants.REGISTRY_ERROR_INITIALIZE_XDS;
 import static org.apache.dubbo.common.constants.LoggerCodeConstants.REGISTRY_ERROR_PARSING_XDS;
@@ -104,9 +101,13 @@ public class XdsServiceDiscovery extends ReflectionBasedServiceDiscovery {
     }
 
     @Override
-    public List<String> snp(URL url) {
+    public List<String> snp(URL url, MappingListener mappingListener) {
         System.out.println("snp----:xdssd:"+url.getServiceInterface());
-        List<String> snp = exchanger.snp(url);
+        if (exchanger == null){
+            System.out.println("snp---- exchanger not init");
+            return Collections.emptyList();
+        }
+        List<String> snp = exchanger.snp(url, mappingListener);
         return snp;
     }
 }

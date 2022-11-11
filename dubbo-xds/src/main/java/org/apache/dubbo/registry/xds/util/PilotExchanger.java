@@ -16,16 +16,16 @@
  */
 package org.apache.dubbo.registry.xds.util;
 
+import com.google.protobuf.ProtocolStringList;
 import istio.extensions.v1alpha1.ServiceNameMappingOuterClass;
 import org.apache.dubbo.common.URL;
-import org.apache.dubbo.common.constants.RegistryConstants;
 import org.apache.dubbo.common.logger.ErrorTypeAwareLogger;
 import org.apache.dubbo.common.logger.LoggerFactory;
 import org.apache.dubbo.common.utils.CollectionUtils;
 import org.apache.dubbo.common.utils.ConcurrentHashSet;
 import org.apache.dubbo.common.utils.JsonUtils;
-import org.apache.dubbo.common.utils.StringUtils;
-import org.apache.dubbo.registry.xds.XdsServiceDiscovery;
+import org.apache.dubbo.metadata.MappingChangedEvent;
+import org.apache.dubbo.metadata.MappingListener;
 import org.apache.dubbo.registry.xds.util.protocol.impl.EdsProtocol;
 import org.apache.dubbo.registry.xds.util.protocol.impl.LdsProtocol;
 import org.apache.dubbo.registry.xds.util.protocol.impl.RdsProtocol;
@@ -39,8 +39,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
-
-import static org.apache.dubbo.common.constants.LoggerCodeConstants.REGISTRY_ERROR_REQUEST_XDS;
 
 public class PilotExchanger {
 
@@ -98,14 +96,23 @@ public class PilotExchanger {
         });
     }
 
-    public List<String> snp(URL url) {
-        try{
-            List<ServiceNameMappingOuterClass.ServiceNameMapping> resource = snpProtocol.getResource(new HashSet<>(Arrays.asList(url.getServiceInterface())));
-            logger.error("snp-----------"+ url.getServiceInterface() + "-" + JsonUtils.getJson().toJson(resource));
+    public List<String> snp(URL url, MappingListener mappingListener) {
+        try {
+            String serviceInterface = url.getServiceInterface();
+            Set<String> resources = new HashSet<>(Collections.singletonList(serviceInterface));
+            List<ServiceNameMappingOuterClass.ServiceNameMapping> resource = snpProtocol.getResource(resources);
+            logger.error("snp-----------" + serviceInterface + "-" + JsonUtils.getJson().toJson(resource));
+            snpProtocol.observeResource(resources, (newListener) -> {
+                if (!newListener.isEmpty()) {
+                    List<String> applicationNamesList = newListener.get(0).getApplicationNamesList();
+                    MappingChangedEvent mappingChangedEvent = new MappingChangedEvent(serviceInterface, new HashSet<>(applicationNamesList));
+                    mappingListener.onEvent(mappingChangedEvent);
+                }
+            });
             if (!resource.isEmpty()) {
                 return resource.get(0).getApplicationNamesList();
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -177,13 +184,9 @@ public class PilotExchanger {
         // if router is empty, do nothing
         // observation will be created when RDS updates
         if (CollectionUtils.isNotEmpty(router)) {
-            long endpointRequest =
-                edsProtocol.observeResource(
-                    router,
-                    endpointResult ->
-                        // notify consumers
-                        domainObserveConsumer.get(domain).forEach(
-                            consumer1 -> consumer1.accept(endpointResult.getEndpoints())));
+            long endpointRequest = edsProtocol.observeResource(router, endpointResult ->
+                // notify consumers
+                domainObserveConsumer.get(domain).forEach(consumer1 -> consumer1.accept(endpointResult.getEndpoints())));
             domainObserveRequest.put(domain, endpointRequest);
         }
     }

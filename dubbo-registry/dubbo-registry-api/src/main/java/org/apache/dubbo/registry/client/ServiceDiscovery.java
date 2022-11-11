@@ -18,6 +18,7 @@ package org.apache.dubbo.registry.client;
 
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.lang.Prioritized;
+import org.apache.dubbo.metadata.MappingListener;
 import org.apache.dubbo.metadata.MetadataInfo;
 import org.apache.dubbo.registry.RegistryService;
 import org.apache.dubbo.registry.client.event.listener.ServiceInstancesChangedListener;
@@ -101,7 +102,7 @@ public interface ServiceDiscovery extends RegistryService, Prioritized {
     default void map(URL url) {
     }
 
-    default List<String> snp(URL url) {
+    default List<String> snp(URL url, MappingListener mappingListener) {
         return new ArrayList<>();
     }
 }
