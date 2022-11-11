@@ -109,10 +109,7 @@ public class MetadataServiceNameMapping extends AbstractServiceNameMapping {
 
     @Override
     public Set<String> get(URL url) {
-        ServiceDiscovery serviceDiscovery = ServiceDiscoveryFactory.getExtension(url).getServiceDiscovery(url);
-        List<String> snp = serviceDiscovery.snp(url, null);
-        logger.error("snp--" + snp.toString());
-        return new HashSet<>(snp);
+        return new HashSet<>();
     }
 
     @Override

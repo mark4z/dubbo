@@ -293,7 +293,7 @@ public abstract class AbstractServiceNameMapping implements ServiceNameMapping {
                             }
                         }
                     } else {
-                        mappedServices = get(subscribedURL);
+                        mappedServices = toTreeSet(getAndListen(serviceDiscovery,subscribedURL, null, registryURL));
                         if (CollectionUtils.isNotEmpty(mappedServices)) {
                             AbstractServiceNameMapping.this.putCachedMapping(mappingKey, mappedServices);
                         }
