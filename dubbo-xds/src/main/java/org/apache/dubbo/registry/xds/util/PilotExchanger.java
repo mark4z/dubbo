@@ -99,11 +99,16 @@ public class PilotExchanger {
     }
 
     public List<String> snp(URL url) {
-        List<ServiceNameMappingOuterClass.ServiceNameMapping> resource = snpProtocol.getResource(new HashSet<>(Arrays.asList(url.getServiceInterface())));
-        logger.error("snp-----------"+ url.getServiceInterface() + "-" + JsonUtils.getJson().toJson(resource));
-        if (!resource.isEmpty()) {
-            return resource.get(0).getApplicationNamesList();
+        try{
+            List<ServiceNameMappingOuterClass.ServiceNameMapping> resource = snpProtocol.getResource(new HashSet<>(Arrays.asList(url.getServiceInterface())));
+            logger.error("snp-----------"+ url.getServiceInterface() + "-" + JsonUtils.getJson().toJson(resource));
+            if (!resource.isEmpty()) {
+                return resource.get(0).getApplicationNamesList();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
+
         return new ArrayList<>();
     }
 
