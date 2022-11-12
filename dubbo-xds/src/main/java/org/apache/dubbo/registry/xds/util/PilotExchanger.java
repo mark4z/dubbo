@@ -171,7 +171,7 @@ public class PilotExchanger {
         // Observe SNP updated
         snpProtocol.observeResource(resources, (List<Snp.ServiceNameMapping> newSnps) -> {
             // update local cache
-            System.out.println("snps update: " + snps.toString());
+            System.out.println("snps update: " + newSnps.toString());
             if (listener != null) {
                 Set<String> newRes = new HashSet<>();
                 if (!newSnps.isEmpty()) {
