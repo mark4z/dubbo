@@ -20,6 +20,8 @@ import istio.extensions.v1alpha1.Snp;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.utils.CollectionUtils;
 import org.apache.dubbo.common.utils.ConcurrentHashSet;
+import org.apache.dubbo.metadata.MappingChangedEvent;
+import org.apache.dubbo.metadata.MappingListener;
 import org.apache.dubbo.registry.xds.util.protocol.impl.EdsProtocol;
 import org.apache.dubbo.registry.xds.util.protocol.impl.LdsProtocol;
 import org.apache.dubbo.registry.xds.util.protocol.impl.RdsProtocol;
@@ -33,6 +35,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class PilotExchanger {
 
@@ -83,12 +86,6 @@ public class PilotExchanger {
                     }
                 }
             }
-        });
-
-        // Observe SNP updated
-        snpProtocol.observeResource(new HashSet<>(Collections.singletonList("dubbo-samples-xds-provider")), (List<Snp.ServiceNameMapping> snps) -> {
-            // update local cache
-            System.out.println("snps update: " + snps.toString());
         });
     }
 
@@ -166,5 +163,26 @@ public class PilotExchanger {
                             consumer1 -> consumer1.accept(endpointResult.getEndpoints())));
             domainObserveRequest.put(domain, endpointRequest);
         }
+    }
+
+    public Set<String> snp(String serviceInterface, MappingListener listener) {
+        HashSet<String> resources = new HashSet<>(Collections.singletonList(serviceInterface));
+        List<Snp.ServiceNameMapping> snps = snpProtocol.getResource(resources);
+        // Observe SNP updated
+        snpProtocol.observeResource(resources, (List<Snp.ServiceNameMapping> newSnps) -> {
+            // update local cache
+            System.out.println("snps update: " + snps.toString());
+            if (listener != null) {
+                Set<String> newRes = new HashSet<>();
+                if (!newSnps.isEmpty()) {
+                    newRes = new HashSet<>(newSnps.get(0).getApplicationNamesList());
+                }
+                listener.onEvent(new MappingChangedEvent(serviceInterface, newRes));
+            }
+        });
+        if (snps.isEmpty()) {
+            return new HashSet<>();
+        }
+        return new HashSet<>(snps.get(0).getApplicationNamesList());
     }
 }

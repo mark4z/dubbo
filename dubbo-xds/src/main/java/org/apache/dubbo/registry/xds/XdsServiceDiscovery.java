@@ -19,6 +19,7 @@ package org.apache.dubbo.registry.xds;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
+import org.apache.dubbo.metadata.MappingListener;
 import org.apache.dubbo.registry.client.DefaultServiceInstance;
 import org.apache.dubbo.registry.client.ReflectionBasedServiceDiscovery;
 import org.apache.dubbo.registry.client.ServiceInstance;
@@ -93,5 +94,10 @@ public class XdsServiceDiscovery extends ReflectionBasedServiceDiscovery {
         });
         instances.sort(Comparator.comparingInt(ServiceInstance::hashCode));
         return instances;
+    }
+
+    @Override
+    public Set<String> snp(String serviceInterface, MappingListener listener) {
+        return exchanger.snp(serviceInterface, listener);
     }
 }

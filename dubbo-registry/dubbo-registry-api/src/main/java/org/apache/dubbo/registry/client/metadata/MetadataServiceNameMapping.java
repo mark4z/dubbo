@@ -28,12 +28,10 @@ import org.apache.dubbo.metadata.MetadataService;
 import org.apache.dubbo.metadata.report.MetadataReport;
 import org.apache.dubbo.metadata.report.MetadataReportInstance;
 import org.apache.dubbo.registry.client.RegistryClusterIdentifier;
+import org.apache.dubbo.registry.client.ServiceDiscovery;
 import org.apache.dubbo.rpc.model.ApplicationModel;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.apache.dubbo.common.constants.CommonConstants.COMMA_SEPARATOR;
 import static org.apache.dubbo.common.constants.CommonConstants.DEFAULT_KEY;
@@ -107,26 +105,19 @@ public class MetadataServiceNameMapping extends AbstractServiceNameMapping {
     }
 
     @Override
-    public Set<String> get(URL url) {
+    public Set<String> get(URL url, Object serviceDiscovery) {
         String serviceInterface = url.getServiceInterface();
-        String registryCluster = getRegistryCluster(url);
-        MetadataReport metadataReport = metadataReportInstance.getMetadataReport(registryCluster);
-        if (metadataReport == null) {
-            return Collections.emptySet();
+        if (serviceDiscovery == null) {
+            System.out.println("snp---: public Set<String> get(URL url, Object serviceDiscovery) fail");
+            return new HashSet<>();
         }
-        return metadataReport.getServiceAppMapping(serviceInterface, url);
+        return ((ServiceDiscovery) serviceDiscovery).snp(serviceInterface, null);
     }
 
     @Override
-    public Set<String> getAndListen(URL url, MappingListener mappingListener) {
+    public Set<String> getAndListen(Object serviceDiscovery, URL url, MappingListener mappingListener) {
         String serviceInterface = url.getServiceInterface();
-        // randomly pick one metadata report is ok for it's guaranteed all metadata report will have the same mapping data.
-        String registryCluster = getRegistryCluster(url);
-        MetadataReport metadataReport = metadataReportInstance.getMetadataReport(registryCluster);
-        if (metadataReport == null) {
-            return Collections.emptySet();
-        }
-        return metadataReport.getServiceAppMapping(serviceInterface, mappingListener, url);
+        return ((ServiceDiscovery) serviceDiscovery).snp(serviceInterface, mappingListener);
     }
 
     @Override

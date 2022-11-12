@@ -125,7 +125,7 @@ public class ServiceDiscoveryRegistryTest {
         ApplicationModel applicationModel = spy(ApplicationModel.defaultModel());
         when(applicationModel.getDefaultExtension(ServiceNameMapping.class)).thenReturn(mapping);
         // Exceptional case, no interface-app mapping found
-        when(mapping.getAndListen(any(), any(), any())).thenReturn(Collections.emptySet());
+        when(mapping.getAndListen(any(), any(), any(), this.serviceDiscovery)).thenReturn(Collections.emptySet());
         // when check = false
         try {
             registryURL = registryURL.setScopeModel(applicationModel);
@@ -152,7 +152,7 @@ public class ServiceDiscoveryRegistryTest {
         // Normal case
         Set<String> singleApp = new HashSet<>();
         singleApp.add(APP_NAME1);
-        when(mapping.getAndListen(any(), any(), any())).thenReturn(singleApp);
+        when(mapping.getAndListen(any(), any(), any(), this.serviceDiscovery)).thenReturn(singleApp);
         try {
             serviceDiscoveryRegistry.doSubscribe(checkURL, testServiceListener);
         } finally {

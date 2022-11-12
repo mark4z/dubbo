@@ -199,7 +199,7 @@ public class ServiceDiscoveryRegistry extends FailbackRegistry {
             Set<String> subscribedServices = serviceNameMapping.getCachedMapping(url);
             try {
                 MappingListener mappingListener = new DefaultMappingListener(url, subscribedServices, listener);
-                subscribedServices = serviceNameMapping.getAndListen(this.getUrl(), url, mappingListener);
+                subscribedServices = serviceNameMapping.getAndListen(this.getUrl(), url, mappingListener, this.serviceDiscovery);
                 mappingListeners.put(url.getProtocolServiceKey(), mappingListener);
             } catch (Exception e) {
                 logger.warn("Cannot find app mapping for service " + url.getServiceInterface() + ", will not migrate.", e);
