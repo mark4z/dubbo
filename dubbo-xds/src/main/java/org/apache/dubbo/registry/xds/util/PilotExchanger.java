@@ -22,6 +22,9 @@ import org.apache.dubbo.common.utils.CollectionUtils;
 import org.apache.dubbo.common.utils.ConcurrentHashSet;
 import org.apache.dubbo.metadata.MappingChangedEvent;
 import org.apache.dubbo.metadata.MappingListener;
+import org.apache.dubbo.registry.xds.istio.IstioEnv;
+import org.apache.dubbo.registry.xds.snp.ServiceNameMappingServiceGrpc;
+import org.apache.dubbo.registry.xds.snp.Servicenamemapping;
 import org.apache.dubbo.registry.xds.util.protocol.impl.EdsProtocol;
 import org.apache.dubbo.registry.xds.util.protocol.impl.LdsProtocol;
 import org.apache.dubbo.registry.xds.util.protocol.impl.RdsProtocol;
@@ -50,6 +53,8 @@ public class PilotExchanger {
 
     private RouteResult routeResult;
 
+    private final ServiceNameMappingServiceGrpc.ServiceNameMappingServiceBlockingStub serviceNameMappingServiceBlockingStub;
+
     private final AtomicLong observeRouteRequest = new AtomicLong(-1);
 
     private final Map<String, Long> domainObserveRequest = new ConcurrentHashMap<>();
@@ -58,6 +63,8 @@ public class PilotExchanger {
 
     private PilotExchanger(URL url) {
         xdsChannel = new XdsChannel(url);
+        serviceNameMappingServiceBlockingStub = ServiceNameMappingServiceGrpc.newBlockingStub(xdsChannel.getChannel());
+
         int pollingPoolSize = url.getParameter("pollingPoolSize", 10);
         int pollingTimeout = url.getParameter("pollingTimeout", 10);
         LdsProtocol ldsProtocol = new LdsProtocol(xdsChannel, NodeBuilder.build(), pollingPoolSize, pollingTimeout);
@@ -176,6 +183,13 @@ public class PilotExchanger {
                 Set<String> newRes = new HashSet<>();
                 if (!newSnps.isEmpty()) {
                     newRes = new HashSet<>(newSnps.get(0).getApplicationNamesList());
+
+                    Servicenamemapping.ServiceMappingResponse serviceMappingResponse = serviceNameMappingServiceBlockingStub.registerServiceAppMapping(Servicenamemapping.ServiceMappingRequest.newBuilder()
+                        .setNamespace(IstioEnv.getInstance().getWorkloadNameSpace())
+                        .setApplicationName(newSnps.get(0).getApplicationNamesList().get(0))
+                        .addInterfaceName(serviceInterface)
+                        .build());
+                    System.out.println("registerServiceAppMapping: " + serviceMappingResponse.toString());
                 }
                 listener.onEvent(new MappingChangedEvent(serviceInterface, newRes));
             }

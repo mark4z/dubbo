@@ -43,6 +43,10 @@ public class XdsChannel {
 
     private final ManagedChannel channel;
 
+    public ManagedChannel getChannel() {
+        return channel;
+    }
+
     protected XdsChannel(URL url) {
         ManagedChannel managedChannel = null;
         try {
