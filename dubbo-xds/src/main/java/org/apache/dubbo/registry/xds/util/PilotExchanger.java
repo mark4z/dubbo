@@ -16,20 +16,20 @@
  */
 package org.apache.dubbo.registry.xds.util;
 
+import istio.extensions.v1alpha1.Snp;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.utils.CollectionUtils;
 import org.apache.dubbo.common.utils.ConcurrentHashSet;
 import org.apache.dubbo.registry.xds.util.protocol.impl.EdsProtocol;
 import org.apache.dubbo.registry.xds.util.protocol.impl.LdsProtocol;
 import org.apache.dubbo.registry.xds.util.protocol.impl.RdsProtocol;
+import org.apache.dubbo.registry.xds.util.protocol.impl.SnpProtocol;
 import org.apache.dubbo.registry.xds.util.protocol.message.Endpoint;
 import org.apache.dubbo.registry.xds.util.protocol.message.EndpointResult;
 import org.apache.dubbo.registry.xds.util.protocol.message.ListenerResult;
 import org.apache.dubbo.registry.xds.util.protocol.message.RouteResult;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
@@ -41,6 +41,7 @@ public class PilotExchanger {
     private final RdsProtocol rdsProtocol;
 
     private final EdsProtocol edsProtocol;
+    private final SnpProtocol snpProtocol;
 
     private ListenerResult listenerResult;
 
@@ -59,7 +60,7 @@ public class PilotExchanger {
         LdsProtocol ldsProtocol = new LdsProtocol(xdsChannel, NodeBuilder.build(), pollingPoolSize, pollingTimeout);
         this.rdsProtocol = new RdsProtocol(xdsChannel, NodeBuilder.build(), pollingPoolSize, pollingTimeout);
         this.edsProtocol = new EdsProtocol(xdsChannel, NodeBuilder.build(), pollingPoolSize, pollingTimeout);
-
+        this.snpProtocol = new SnpProtocol(xdsChannel, NodeBuilder.build(), pollingPoolSize, pollingTimeout);
         this.listenerResult = ldsProtocol.getListeners();
         this.routeResult = rdsProtocol.getResource(listenerResult.getRouteConfigNames());
 
@@ -82,6 +83,12 @@ public class PilotExchanger {
                     }
                 }
             }
+        });
+
+        // Observe SNP updated
+        snpProtocol.observeResource(new HashSet<>(Collections.singletonList("dubbo-samples-xds-provider")), (List<Snp.ServiceNameMapping> snps) -> {
+            // update local cache
+            System.out.println("snps update: " + snps.toString());
         });
     }
 
