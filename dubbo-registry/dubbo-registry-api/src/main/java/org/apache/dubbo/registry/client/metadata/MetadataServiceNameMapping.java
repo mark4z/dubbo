@@ -27,10 +27,7 @@ import org.apache.dubbo.metadata.MappingListener;
 import org.apache.dubbo.metadata.MetadataService;
 import org.apache.dubbo.metadata.report.MetadataReport;
 import org.apache.dubbo.metadata.report.MetadataReportInstance;
-import org.apache.dubbo.registry.client.RegistryClusterIdentifier;
-import org.apache.dubbo.registry.client.ServiceDiscovery;
-import org.apache.dubbo.registry.client.ServiceDiscoveryRegistry;
-import org.apache.dubbo.registry.client.ServiceDiscoveryRegistryFactory;
+import org.apache.dubbo.registry.client.*;
 import org.apache.dubbo.rpc.model.ApplicationModel;
 import org.apache.dubbo.rpc.model.ProviderModel;
 
@@ -65,7 +62,7 @@ public class MetadataServiceNameMapping extends AbstractServiceNameMapping {
 
         boolean result = true;
         URL s = ((ProviderModel)url.getAttribute("serviceModel")).getStatedUrl().get(1).getRegistryUrl();
-        ServiceDiscovery serviceDiscovery = new ServiceDiscoveryRegistry(s, this.applicationModel).getServiceDiscovery();
+        ServiceDiscovery serviceDiscovery = ServiceDiscoveryFactory.getExtension(s).getServiceDiscovery(s);
         serviceDiscovery.map(url);
         return result;
     }
