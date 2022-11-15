@@ -104,4 +104,8 @@ public interface ServiceDiscovery extends RegistryService, Prioritized {
     default Set<String> snp(String serviceInterface, MappingListener listener) {
         return new HashSet<>();
     }
+
+    default void map(URL url){
+
+    }
 }

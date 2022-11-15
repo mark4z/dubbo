@@ -16,8 +16,8 @@
  */
 package org.apache.dubbo.registry.xds.util.protocol.delta;
 
-import istio.extensions.v1alpha1.Snp;
 import org.apache.dubbo.common.utils.CollectionUtils;
+import org.apache.dubbo.registry.xds.snp.Snp;
 import org.apache.dubbo.registry.xds.util.protocol.DeltaResource;
 
 import java.util.Collection;
@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DeltaSnp implements DeltaResource<List<Snp.ServiceNameMapping>> {
+public class DeltaSnp implements DeltaResource<List<Snp.ServiceMappingXdsResponse>> {
     private final Map<String, Map<String, Set<String>>> data = new ConcurrentHashMap<>();
 
     public void addResource(String resourceName, Map<String, Set<String>> route) {
@@ -40,7 +40,7 @@ public class DeltaSnp implements DeltaResource<List<Snp.ServiceNameMapping>> {
     }
 
     @Override
-    public List<Snp.ServiceNameMapping> getResource() {
+    public List<Snp.ServiceMappingXdsResponse> getResource() {
         Map<String, Set<String>> result = new ConcurrentHashMap<>();
         data.values().forEach(result::putAll);
         return null;

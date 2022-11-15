@@ -29,6 +29,8 @@ import org.apache.dubbo.metadata.report.MetadataReport;
 import org.apache.dubbo.metadata.report.MetadataReportInstance;
 import org.apache.dubbo.registry.client.RegistryClusterIdentifier;
 import org.apache.dubbo.registry.client.ServiceDiscovery;
+import org.apache.dubbo.registry.client.ServiceDiscoveryRegistry;
+import org.apache.dubbo.registry.client.ServiceDiscoveryRegistryFactory;
 import org.apache.dubbo.rpc.model.ApplicationModel;
 
 import java.util.*;
@@ -65,42 +67,10 @@ public class MetadataServiceNameMapping extends AbstractServiceNameMapping {
         }
 
         boolean result = true;
-        for (Map.Entry<String, MetadataReport> entry : metadataReportInstance.getMetadataReports(true).entrySet()) {
-            MetadataReport metadataReport = entry.getValue();
-            String appName = applicationModel.getApplicationName();
-            try {
-                if (metadataReport.registerServiceAppMapping(serviceInterface, appName, url)) {
-                    // MetadataReport support directly register service-app mapping
-                    continue;
-                }
-
-                boolean succeeded;
-                int currentRetryTimes = 1;
-                String newConfigContent = appName;
-                do {
-                    ConfigItem configItem = metadataReport.getConfigItem(serviceInterface, DEFAULT_MAPPING_GROUP);
-                    String oldConfigContent = configItem.getContent();
-                    if (StringUtils.isNotEmpty(oldConfigContent)) {
-                        boolean contains = StringUtils.isContains(oldConfigContent, appName);
-                        if (contains) {
-                            // From the user's perspective, it means successful when the oldConfigContent has contained the current appName. So we should not throw an Exception to user, it will confuse the user.
-                            succeeded = true;
-                            break;
-                        }
-                        newConfigContent = oldConfigContent + COMMA_SEPARATOR + appName;
-                    }
-                    succeeded = metadataReport.registerServiceAppMapping(serviceInterface, DEFAULT_MAPPING_GROUP, newConfigContent, configItem.getTicket());
-                } while (!succeeded && currentRetryTimes++ <= CAS_RETRY_TIMES);
-
-                if (!succeeded) {
-                    result = false;
-                }
-            } catch (Exception e) {
-                result = false;
-                logger.warn("Failed registering mapping to remote." + metadataReport, e);
-            }
-        }
-
+        ServiceDiscoveryRegistryFactory serviceDiscoveryRegistryFactory = new ServiceDiscoveryRegistryFactory();
+        serviceDiscoveryRegistryFactory.setApplicationModel(applicationModel);
+        ServiceDiscovery serviceDiscovery = ((ServiceDiscoveryRegistry) serviceDiscoveryRegistryFactory.getRegistry(url)).getServiceDiscovery();
+        serviceDiscovery.map(url);
         return result;
     }
 

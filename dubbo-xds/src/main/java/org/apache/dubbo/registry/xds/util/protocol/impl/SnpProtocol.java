@@ -19,24 +19,20 @@ package org.apache.dubbo.registry.xds.util.protocol.impl;
 import com.google.protobuf.Any;
 import com.google.protobuf.InvalidProtocolBufferException;
 import io.envoyproxy.envoy.config.core.v3.Node;
-import io.envoyproxy.envoy.config.route.v3.Route;
-import io.envoyproxy.envoy.config.route.v3.RouteAction;
-import io.envoyproxy.envoy.config.route.v3.RouteConfiguration;
 import io.envoyproxy.envoy.service.discovery.v3.DiscoveryResponse;
-import istio.extensions.v1alpha1.Snp;
 import org.apache.dubbo.common.logger.ErrorTypeAwareLogger;
 import org.apache.dubbo.common.logger.LoggerFactory;
+import org.apache.dubbo.registry.xds.snp.Snp;
 import org.apache.dubbo.registry.xds.util.XdsChannel;
 import org.apache.dubbo.registry.xds.util.protocol.AbstractProtocol;
-import org.apache.dubbo.registry.xds.util.protocol.delta.DeltaRoute;
 import org.apache.dubbo.registry.xds.util.protocol.delta.DeltaSnp;
-import org.apache.dubbo.registry.xds.util.protocol.message.RouteResult;
 
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
-public class SnpProtocol extends AbstractProtocol<List<Snp.ServiceNameMapping>, DeltaSnp> {
+public class SnpProtocol extends AbstractProtocol<List<Snp.ServiceMappingXdsResponse>, DeltaSnp> {
 
     private static final ErrorTypeAwareLogger logger = LoggerFactory.getErrorTypeAwareLogger(SnpProtocol.class);
 
@@ -50,9 +46,9 @@ public class SnpProtocol extends AbstractProtocol<List<Snp.ServiceNameMapping>, 
     }
 
     @Override
-    protected List<Snp.ServiceNameMapping> decodeDiscoveryResponse(DiscoveryResponse response) {
+    protected List<Snp.ServiceMappingXdsResponse> decodeDiscoveryResponse(DiscoveryResponse response) {
         if (getTypeUrl().equals(response.getTypeUrl())) {
-            List<Snp.ServiceNameMapping> map = response.getResourcesList().stream()
+            List<Snp.ServiceMappingXdsResponse> map = response.getResourcesList().stream()
                 .map(SnpProtocol::unpackSnpConfiguration)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
@@ -61,9 +57,9 @@ public class SnpProtocol extends AbstractProtocol<List<Snp.ServiceNameMapping>, 
         return null;
     }
 
-    private static Snp.ServiceNameMapping unpackSnpConfiguration(Any any) {
+    private static Snp.ServiceMappingXdsResponse unpackSnpConfiguration(Any any) {
         try {
-            return any.unpack(Snp.ServiceNameMapping.class);
+            return any.unpack(Snp.ServiceMappingXdsResponse.class);
         } catch (InvalidProtocolBufferException e) {
             System.out.println("Error occur when decode xDS response.");
             e.printStackTrace();

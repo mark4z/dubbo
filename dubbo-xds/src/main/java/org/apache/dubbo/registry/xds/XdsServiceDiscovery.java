@@ -100,4 +100,8 @@ public class XdsServiceDiscovery extends ReflectionBasedServiceDiscovery {
     public Set<String> snp(String serviceInterface, MappingListener listener) {
         return exchanger.snp(serviceInterface, listener);
     }
+    @Override
+    public void map(URL url){
+        exchanger.map(url);
+    }
 }

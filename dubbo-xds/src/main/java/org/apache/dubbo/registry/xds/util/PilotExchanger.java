@@ -16,7 +16,6 @@
  */
 package org.apache.dubbo.registry.xds.util;
 
-import istio.extensions.v1alpha1.Snp;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.utils.CollectionUtils;
 import org.apache.dubbo.common.utils.ConcurrentHashSet;
@@ -24,7 +23,7 @@ import org.apache.dubbo.metadata.MappingChangedEvent;
 import org.apache.dubbo.metadata.MappingListener;
 import org.apache.dubbo.registry.xds.istio.IstioEnv;
 import org.apache.dubbo.registry.xds.snp.ServiceNameMappingServiceGrpc;
-import org.apache.dubbo.registry.xds.snp.Servicenamemapping;
+import org.apache.dubbo.registry.xds.snp.Snp;
 import org.apache.dubbo.registry.xds.util.protocol.impl.EdsProtocol;
 import org.apache.dubbo.registry.xds.util.protocol.impl.LdsProtocol;
 import org.apache.dubbo.registry.xds.util.protocol.impl.RdsProtocol;
@@ -174,22 +173,15 @@ public class PilotExchanger {
 
     public Set<String> snp(String serviceInterface, MappingListener listener) {
         HashSet<String> resources = new HashSet<>(Collections.singletonList(serviceInterface));
-        List<Snp.ServiceNameMapping> snps = snpProtocol.getResource(resources);
+        List<Snp.ServiceMappingXdsResponse> snps = snpProtocol.getResource(resources);
         // Observe SNP updated
-        snpProtocol.observeResource(resources, (List<Snp.ServiceNameMapping> newSnps) -> {
+        snpProtocol.observeResource(resources, (List<Snp.ServiceMappingXdsResponse> newSnps) -> {
             // update local cache
             System.out.println("snps update: " + newSnps.toString());
             if (listener != null) {
                 Set<String> newRes = new HashSet<>();
                 if (!newSnps.isEmpty()) {
                     newRes = new HashSet<>(newSnps.get(0).getApplicationNamesList());
-
-                    Servicenamemapping.ServiceMappingResponse serviceMappingResponse = serviceNameMappingServiceBlockingStub.registerServiceAppMapping(Servicenamemapping.ServiceMappingRequest.newBuilder()
-                        .setNamespace(IstioEnv.getInstance().getWorkloadNameSpace())
-                        .setApplicationName(newSnps.get(0).getApplicationNamesList().get(0))
-                        .addInterfaceName(serviceInterface)
-                        .build());
-                    System.out.println("registerServiceAppMapping: " + serviceMappingResponse.toString());
                 }
                 listener.onEvent(new MappingChangedEvent(serviceInterface, newRes));
             }
@@ -198,5 +190,14 @@ public class PilotExchanger {
             return new HashSet<>();
         }
         return new HashSet<>(snps.get(0).getApplicationNamesList());
+    }
+
+    public void map(URL url) {
+        Snp.ServiceMappingResponse serviceMappingResponse = serviceNameMappingServiceBlockingStub.registerServiceAppMapping(Snp.ServiceMappingRequest.newBuilder()
+            .setNamespace(IstioEnv.getInstance().getWorkloadNameSpace())
+            .setApplicationName(url.getApplication())
+            .addInterfaceNames(url.getServiceInterface())
+            .build());
+        System.out.println("registerServiceAppMapping: " + serviceMappingResponse.toString());
     }
 }
