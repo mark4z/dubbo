@@ -15,7 +15,7 @@ public final class ServiceNameMappingServiceGrpc {
 
   private ServiceNameMappingServiceGrpc() {}
 
-  public static final String SERVICE_NAME = "ServiceNameMappingService";
+    public static final String SERVICE_NAME = "dubbo.networking.v1alpha1.ServiceNameMappingService";
 
   // Static method descriptors that strictly reflect the proto.
   private static volatile io.grpc.MethodDescriptor<Snp.ServiceMappingRequest,
@@ -55,7 +55,7 @@ public final class ServiceNameMappingServiceGrpc {
   public static ServiceNameMappingServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<ServiceNameMappingServiceStub> factory =
       new io.grpc.stub.AbstractStub.StubFactory<ServiceNameMappingServiceStub>() {
-        @Override
+        @java.lang.Override
         public ServiceNameMappingServiceStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
           return new ServiceNameMappingServiceStub(channel, callOptions);
         }
@@ -70,7 +70,7 @@ public final class ServiceNameMappingServiceGrpc {
       io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<ServiceNameMappingServiceBlockingStub> factory =
       new io.grpc.stub.AbstractStub.StubFactory<ServiceNameMappingServiceBlockingStub>() {
-        @Override
+        @java.lang.Override
         public ServiceNameMappingServiceBlockingStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
           return new ServiceNameMappingServiceBlockingStub(channel, callOptions);
         }
@@ -85,7 +85,7 @@ public final class ServiceNameMappingServiceGrpc {
       io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<ServiceNameMappingServiceFutureStub> factory =
       new io.grpc.stub.AbstractStub.StubFactory<ServiceNameMappingServiceFutureStub>() {
-        @Override
+        @java.lang.Override
         public ServiceNameMappingServiceFutureStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
           return new ServiceNameMappingServiceFutureStub(channel, callOptions);
         }
@@ -108,7 +108,7 @@ public final class ServiceNameMappingServiceGrpc {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getRegisterServiceAppMappingMethod(), responseObserver);
     }
 
-    @Override public final io.grpc.ServerServiceDefinition bindService() {
+    @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
             getRegisterServiceAppMappingMethod(),
@@ -133,7 +133,7 @@ public final class ServiceNameMappingServiceGrpc {
       super(channel, callOptions);
     }
 
-    @Override
+    @java.lang.Override
     protected ServiceNameMappingServiceStub build(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       return new ServiceNameMappingServiceStub(channel, callOptions);
@@ -160,7 +160,7 @@ public final class ServiceNameMappingServiceGrpc {
       super(channel, callOptions);
     }
 
-    @Override
+    @java.lang.Override
     protected ServiceNameMappingServiceBlockingStub build(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       return new ServiceNameMappingServiceBlockingStub(channel, callOptions);
@@ -186,7 +186,7 @@ public final class ServiceNameMappingServiceGrpc {
       super(channel, callOptions);
     }
 
-    @Override
+    @java.lang.Override
     protected ServiceNameMappingServiceFutureStub build(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       return new ServiceNameMappingServiceFutureStub(channel, callOptions);
@@ -216,8 +216,8 @@ public final class ServiceNameMappingServiceGrpc {
       this.methodId = methodId;
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
+    @java.lang.Override
+    @java.lang.SuppressWarnings("unchecked")
     public void invoke(Req request, io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
         case METHODID_REGISTER_SERVICE_APP_MAPPING:
@@ -229,8 +229,8 @@ public final class ServiceNameMappingServiceGrpc {
       }
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
+    @java.lang.Override
+    @java.lang.SuppressWarnings("unchecked")
     public io.grpc.stub.StreamObserver<Req> invoke(
         io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
@@ -244,12 +244,12 @@ public final class ServiceNameMappingServiceGrpc {
       implements io.grpc.protobuf.ProtoFileDescriptorSupplier, io.grpc.protobuf.ProtoServiceDescriptorSupplier {
     ServiceNameMappingServiceBaseDescriptorSupplier() {}
 
-    @Override
+    @java.lang.Override
     public com.google.protobuf.Descriptors.FileDescriptor getFileDescriptor() {
       return Snp.getDescriptor();
     }
 
-    @Override
+    @java.lang.Override
     public com.google.protobuf.Descriptors.ServiceDescriptor getServiceDescriptor() {
       return getFileDescriptor().findServiceByName("ServiceNameMappingService");
     }
@@ -269,7 +269,7 @@ public final class ServiceNameMappingServiceGrpc {
       this.methodName = methodName;
     }
 
-    @Override
+    @java.lang.Override
     public com.google.protobuf.Descriptors.MethodDescriptor getMethodDescriptor() {
       return getServiceDescriptor().findMethodByName(methodName);
     }
