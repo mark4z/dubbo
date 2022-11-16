@@ -18,11 +18,11 @@ package org.apache.dubbo.registry.xds.util.protocol.impl;
 
 import com.google.protobuf.Any;
 import com.google.protobuf.InvalidProtocolBufferException;
+import dubbo.networking.v1alpha1.Snp;
 import io.envoyproxy.envoy.config.core.v3.Node;
 import io.envoyproxy.envoy.service.discovery.v3.DiscoveryResponse;
 import org.apache.dubbo.common.logger.ErrorTypeAwareLogger;
 import org.apache.dubbo.common.logger.LoggerFactory;
-import org.apache.dubbo.registry.xds.snp.Snp;
 import org.apache.dubbo.registry.xds.util.XdsChannel;
 import org.apache.dubbo.registry.xds.util.protocol.AbstractProtocol;
 import org.apache.dubbo.registry.xds.util.protocol.delta.DeltaSnp;

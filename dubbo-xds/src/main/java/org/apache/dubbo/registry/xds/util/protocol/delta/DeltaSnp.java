@@ -16,8 +16,8 @@
  */
 package org.apache.dubbo.registry.xds.util.protocol.delta;
 
+import dubbo.networking.v1alpha1.Snp;
 import org.apache.dubbo.common.utils.CollectionUtils;
-import org.apache.dubbo.registry.xds.snp.Snp;
 import org.apache.dubbo.registry.xds.util.protocol.DeltaResource;
 
 import java.util.Collection;

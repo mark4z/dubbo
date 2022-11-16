@@ -1,4 +1,4 @@
-package org.apache.dubbo.registry.xds.snp;
+package dubbo.networking.v1alpha1;
 
 import static io.grpc.MethodDescriptor.generateFullMethodName;
 
@@ -15,32 +15,32 @@ public final class ServiceNameMappingServiceGrpc {
 
   private ServiceNameMappingServiceGrpc() {}
 
-    public static final String SERVICE_NAME = "dubbo.networking.v1alpha1.ServiceNameMappingService";
+  public static final String SERVICE_NAME = "dubbo.networking.v1alpha1.ServiceNameMappingService";
 
   // Static method descriptors that strictly reflect the proto.
-  private static volatile io.grpc.MethodDescriptor<Snp.ServiceMappingRequest,
-      Snp.ServiceMappingResponse> getRegisterServiceAppMappingMethod;
+  private static volatile io.grpc.MethodDescriptor<dubbo.networking.v1alpha1.Snp.ServiceMappingRequest,
+      dubbo.networking.v1alpha1.Snp.ServiceMappingResponse> getRegisterServiceAppMappingMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "registerServiceAppMapping",
-      requestType = Snp.ServiceMappingRequest.class,
-      responseType = Snp.ServiceMappingResponse.class,
+      requestType = dubbo.networking.v1alpha1.Snp.ServiceMappingRequest.class,
+      responseType = dubbo.networking.v1alpha1.Snp.ServiceMappingResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<Snp.ServiceMappingRequest,
-      Snp.ServiceMappingResponse> getRegisterServiceAppMappingMethod() {
-    io.grpc.MethodDescriptor<Snp.ServiceMappingRequest, Snp.ServiceMappingResponse> getRegisterServiceAppMappingMethod;
+  public static io.grpc.MethodDescriptor<dubbo.networking.v1alpha1.Snp.ServiceMappingRequest,
+      dubbo.networking.v1alpha1.Snp.ServiceMappingResponse> getRegisterServiceAppMappingMethod() {
+    io.grpc.MethodDescriptor<dubbo.networking.v1alpha1.Snp.ServiceMappingRequest, dubbo.networking.v1alpha1.Snp.ServiceMappingResponse> getRegisterServiceAppMappingMethod;
     if ((getRegisterServiceAppMappingMethod = ServiceNameMappingServiceGrpc.getRegisterServiceAppMappingMethod) == null) {
       synchronized (ServiceNameMappingServiceGrpc.class) {
         if ((getRegisterServiceAppMappingMethod = ServiceNameMappingServiceGrpc.getRegisterServiceAppMappingMethod) == null) {
           ServiceNameMappingServiceGrpc.getRegisterServiceAppMappingMethod = getRegisterServiceAppMappingMethod =
-              io.grpc.MethodDescriptor.<Snp.ServiceMappingRequest, Snp.ServiceMappingResponse>newBuilder()
+              io.grpc.MethodDescriptor.<dubbo.networking.v1alpha1.Snp.ServiceMappingRequest, dubbo.networking.v1alpha1.Snp.ServiceMappingResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(SERVICE_NAME, "registerServiceAppMapping"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  Snp.ServiceMappingRequest.getDefaultInstance()))
+                  dubbo.networking.v1alpha1.Snp.ServiceMappingRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  Snp.ServiceMappingResponse.getDefaultInstance()))
+                  dubbo.networking.v1alpha1.Snp.ServiceMappingResponse.getDefaultInstance()))
               .setSchemaDescriptor(new ServiceNameMappingServiceMethodDescriptorSupplier("registerServiceAppMapping"))
               .build();
         }
@@ -55,7 +55,7 @@ public final class ServiceNameMappingServiceGrpc {
   public static ServiceNameMappingServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<ServiceNameMappingServiceStub> factory =
       new io.grpc.stub.AbstractStub.StubFactory<ServiceNameMappingServiceStub>() {
-        @java.lang.Override
+        @Override
         public ServiceNameMappingServiceStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
           return new ServiceNameMappingServiceStub(channel, callOptions);
         }
@@ -70,7 +70,7 @@ public final class ServiceNameMappingServiceGrpc {
       io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<ServiceNameMappingServiceBlockingStub> factory =
       new io.grpc.stub.AbstractStub.StubFactory<ServiceNameMappingServiceBlockingStub>() {
-        @java.lang.Override
+        @Override
         public ServiceNameMappingServiceBlockingStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
           return new ServiceNameMappingServiceBlockingStub(channel, callOptions);
         }
@@ -85,7 +85,7 @@ public final class ServiceNameMappingServiceGrpc {
       io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<ServiceNameMappingServiceFutureStub> factory =
       new io.grpc.stub.AbstractStub.StubFactory<ServiceNameMappingServiceFutureStub>() {
-        @java.lang.Override
+        @Override
         public ServiceNameMappingServiceFutureStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
           return new ServiceNameMappingServiceFutureStub(channel, callOptions);
         }
@@ -103,19 +103,19 @@ public final class ServiceNameMappingServiceGrpc {
 
     /**
      */
-    public void registerServiceAppMapping(Snp.ServiceMappingRequest request,
-        io.grpc.stub.StreamObserver<Snp.ServiceMappingResponse> responseObserver) {
+    public void registerServiceAppMapping(dubbo.networking.v1alpha1.Snp.ServiceMappingRequest request,
+        io.grpc.stub.StreamObserver<dubbo.networking.v1alpha1.Snp.ServiceMappingResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getRegisterServiceAppMappingMethod(), responseObserver);
     }
 
-    @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
+    @Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
             getRegisterServiceAppMappingMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
-                Snp.ServiceMappingRequest,
-                Snp.ServiceMappingResponse>(
+                dubbo.networking.v1alpha1.Snp.ServiceMappingRequest,
+                dubbo.networking.v1alpha1.Snp.ServiceMappingResponse>(
                   this, METHODID_REGISTER_SERVICE_APP_MAPPING)))
           .build();
     }
@@ -133,7 +133,7 @@ public final class ServiceNameMappingServiceGrpc {
       super(channel, callOptions);
     }
 
-    @java.lang.Override
+    @Override
     protected ServiceNameMappingServiceStub build(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       return new ServiceNameMappingServiceStub(channel, callOptions);
@@ -141,8 +141,8 @@ public final class ServiceNameMappingServiceGrpc {
 
     /**
      */
-    public void registerServiceAppMapping(Snp.ServiceMappingRequest request,
-        io.grpc.stub.StreamObserver<Snp.ServiceMappingResponse> responseObserver) {
+    public void registerServiceAppMapping(dubbo.networking.v1alpha1.Snp.ServiceMappingRequest request,
+        io.grpc.stub.StreamObserver<dubbo.networking.v1alpha1.Snp.ServiceMappingResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getRegisterServiceAppMappingMethod(), getCallOptions()), request, responseObserver);
     }
@@ -160,7 +160,7 @@ public final class ServiceNameMappingServiceGrpc {
       super(channel, callOptions);
     }
 
-    @java.lang.Override
+    @Override
     protected ServiceNameMappingServiceBlockingStub build(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       return new ServiceNameMappingServiceBlockingStub(channel, callOptions);
@@ -168,7 +168,7 @@ public final class ServiceNameMappingServiceGrpc {
 
     /**
      */
-    public Snp.ServiceMappingResponse registerServiceAppMapping(Snp.ServiceMappingRequest request) {
+    public dubbo.networking.v1alpha1.Snp.ServiceMappingResponse registerServiceAppMapping(dubbo.networking.v1alpha1.Snp.ServiceMappingRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getRegisterServiceAppMappingMethod(), getCallOptions(), request);
     }
@@ -186,7 +186,7 @@ public final class ServiceNameMappingServiceGrpc {
       super(channel, callOptions);
     }
 
-    @java.lang.Override
+    @Override
     protected ServiceNameMappingServiceFutureStub build(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       return new ServiceNameMappingServiceFutureStub(channel, callOptions);
@@ -194,8 +194,8 @@ public final class ServiceNameMappingServiceGrpc {
 
     /**
      */
-    public com.google.common.util.concurrent.ListenableFuture<Snp.ServiceMappingResponse> registerServiceAppMapping(
-        Snp.ServiceMappingRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<dubbo.networking.v1alpha1.Snp.ServiceMappingResponse> registerServiceAppMapping(
+        dubbo.networking.v1alpha1.Snp.ServiceMappingRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getRegisterServiceAppMappingMethod(), getCallOptions()), request);
     }
@@ -216,21 +216,21 @@ public final class ServiceNameMappingServiceGrpc {
       this.methodId = methodId;
     }
 
-    @java.lang.Override
-    @java.lang.SuppressWarnings("unchecked")
+    @Override
+    @SuppressWarnings("unchecked")
     public void invoke(Req request, io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
         case METHODID_REGISTER_SERVICE_APP_MAPPING:
-          serviceImpl.registerServiceAppMapping((Snp.ServiceMappingRequest) request,
-              (io.grpc.stub.StreamObserver<Snp.ServiceMappingResponse>) responseObserver);
+          serviceImpl.registerServiceAppMapping((dubbo.networking.v1alpha1.Snp.ServiceMappingRequest) request,
+              (io.grpc.stub.StreamObserver<dubbo.networking.v1alpha1.Snp.ServiceMappingResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
       }
     }
 
-    @java.lang.Override
-    @java.lang.SuppressWarnings("unchecked")
+    @Override
+    @SuppressWarnings("unchecked")
     public io.grpc.stub.StreamObserver<Req> invoke(
         io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
@@ -244,12 +244,12 @@ public final class ServiceNameMappingServiceGrpc {
       implements io.grpc.protobuf.ProtoFileDescriptorSupplier, io.grpc.protobuf.ProtoServiceDescriptorSupplier {
     ServiceNameMappingServiceBaseDescriptorSupplier() {}
 
-    @java.lang.Override
+    @Override
     public com.google.protobuf.Descriptors.FileDescriptor getFileDescriptor() {
-      return Snp.getDescriptor();
+      return dubbo.networking.v1alpha1.Snp.getDescriptor();
     }
 
-    @java.lang.Override
+    @Override
     public com.google.protobuf.Descriptors.ServiceDescriptor getServiceDescriptor() {
       return getFileDescriptor().findServiceByName("ServiceNameMappingService");
     }
@@ -269,7 +269,7 @@ public final class ServiceNameMappingServiceGrpc {
       this.methodName = methodName;
     }
 
-    @java.lang.Override
+    @Override
     public com.google.protobuf.Descriptors.MethodDescriptor getMethodDescriptor() {
       return getServiceDescriptor().findMethodByName(methodName);
     }

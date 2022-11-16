@@ -16,14 +16,14 @@
  */
 package org.apache.dubbo.registry.xds.util;
 
+import dubbo.networking.v1alpha1.ServiceNameMappingServiceGrpc;
+import dubbo.networking.v1alpha1.Snp;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.utils.CollectionUtils;
 import org.apache.dubbo.common.utils.ConcurrentHashSet;
 import org.apache.dubbo.metadata.MappingChangedEvent;
 import org.apache.dubbo.metadata.MappingListener;
 import org.apache.dubbo.registry.xds.istio.IstioEnv;
-import org.apache.dubbo.registry.xds.snp.ServiceNameMappingServiceGrpc;
-import org.apache.dubbo.registry.xds.snp.Snp;
 import org.apache.dubbo.registry.xds.util.protocol.impl.EdsProtocol;
 import org.apache.dubbo.registry.xds.util.protocol.impl.LdsProtocol;
 import org.apache.dubbo.registry.xds.util.protocol.impl.RdsProtocol;
