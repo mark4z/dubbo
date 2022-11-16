@@ -27,11 +27,9 @@ import org.apache.dubbo.metadata.MappingListener;
 import org.apache.dubbo.metadata.MetadataService;
 import org.apache.dubbo.metadata.report.MetadataReport;
 import org.apache.dubbo.metadata.report.MetadataReportInstance;
-import org.apache.dubbo.registry.client.RegistryClusterIdentifier;
-import org.apache.dubbo.registry.client.ServiceDiscovery;
-import org.apache.dubbo.registry.client.ServiceDiscoveryRegistry;
-import org.apache.dubbo.registry.client.ServiceDiscoveryRegistryFactory;
+import org.apache.dubbo.registry.client.*;
 import org.apache.dubbo.rpc.model.ApplicationModel;
+import org.apache.dubbo.rpc.model.ProviderModel;
 
 import java.util.*;
 
@@ -57,19 +55,14 @@ public class MetadataServiceNameMapping extends AbstractServiceNameMapping {
      */
     @Override
     public boolean map(URL url) {
-        if (CollectionUtils.isEmpty(applicationModel.getApplicationConfigManager().getMetadataConfigs())) {
-            logger.warn("No valid metadata config center found for mapping report.");
-            return false;
-        }
         String serviceInterface = url.getServiceInterface();
         if (IGNORED_SERVICE_INTERFACES.contains(serviceInterface)) {
             return true;
         }
 
         boolean result = true;
-        ServiceDiscoveryRegistryFactory serviceDiscoveryRegistryFactory = new ServiceDiscoveryRegistryFactory();
-        serviceDiscoveryRegistryFactory.setApplicationModel(applicationModel);
-        ServiceDiscovery serviceDiscovery = ((ServiceDiscoveryRegistry) serviceDiscoveryRegistryFactory.getRegistry(url)).getServiceDiscovery();
+        URL s = ((ProviderModel)url.getAttribute("serviceModel")).getStatedUrl().get(1).getRegistryUrl();
+        ServiceDiscovery serviceDiscovery = ServiceDiscoveryFactory.getExtension(s).getServiceDiscovery(s);
         serviceDiscovery.map(url);
         return result;
     }

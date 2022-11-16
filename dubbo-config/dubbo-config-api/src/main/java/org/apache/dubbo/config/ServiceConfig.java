@@ -217,18 +217,16 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
         exported = true;
         List<URL> exportedURLs = this.getExportedUrls();
         exportedURLs.forEach(url -> {
-            if (url.getParameters().containsKey(SERVICE_NAME_MAPPING_KEY)) {
-                ServiceNameMapping serviceNameMapping = ServiceNameMapping.getDefaultExtension(getScopeModel());
-                try {
-                    boolean succeeded = serviceNameMapping.map(url);
-                    if (succeeded) {
-                        logger.info("Successfully registered interface application mapping for service " + url.getServiceKey());
-                    } else {
-                        logger.error("Failed register interface application mapping for service " + url.getServiceKey());
-                    }
-                } catch (Exception e) {
-                    logger.error("Failed register interface application mapping for service " + url.getServiceKey(), e);
+            ServiceNameMapping serviceNameMapping = ServiceNameMapping.getDefaultExtension(getScopeModel());
+            try {
+                boolean succeeded = serviceNameMapping.map(url);
+                if (succeeded) {
+                    logger.info("Successfully registered interface application mapping for service " + url.getServiceKey());
+                } else {
+                    logger.error("Failed register interface application mapping for service " + url.getServiceKey());
                 }
+            } catch (Exception e) {
+                logger.error("Failed register interface application mapping for service " + url.getServiceKey(), e);
             }
         });
         onExported();
