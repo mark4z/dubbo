@@ -177,7 +177,7 @@ public class PilotExchanger {
         // Observe SNP updated
         snpProtocol.observeResource(resources, (List<Snp.ServiceMappingXdsResponse> newSnps) -> {
             // update local cache
-            System.out.println("snps update: " + newSnps.toString());
+            System.out.println("snps[inner] update: " + newSnps.toString());
             if (listener != null) {
                 Set<String> newRes = new HashSet<>();
                 if (!newSnps.isEmpty()) {
@@ -198,6 +198,6 @@ public class PilotExchanger {
             .setApplicationName(url.getApplication())
             .addInterfaceNames(url.getServiceInterface())
             .build());
-        System.out.println("registerServiceAppMapping: " + serviceMappingResponse.toString());
+        System.out.println("registerServiceAppMapping[inner]: " + serviceMappingResponse.toString());
     }
 }
