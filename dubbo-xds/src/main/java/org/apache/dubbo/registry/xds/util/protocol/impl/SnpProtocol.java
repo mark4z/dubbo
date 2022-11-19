@@ -67,10 +67,7 @@ public class SnpProtocol extends AbstractProtocol<List<Snp.ServiceMappingXdsResp
     @Override
     protected List<Snp.ServiceMappingXdsResponse> decodeDiscoveryResponse(DiscoveryResponse response) {
         if (getTypeUrl().equals(response.getTypeUrl())) {
-            List<Snp.ServiceMappingXdsResponse> map = response.getResourcesList().stream()
-                .map(SnpProtocol::unpackSnpConfiguration)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+            List<Snp.ServiceMappingXdsResponse> map = response.getResourcesList().stream().map(SnpProtocol::unpackSnpConfiguration).filter(Objects::nonNull).collect(Collectors.toList());
             return map;
         }
         return null;
@@ -89,35 +86,27 @@ public class SnpProtocol extends AbstractProtocol<List<Snp.ServiceMappingXdsResp
     @Override
     public List<Snp.ServiceMappingXdsResponse> getResource(Set<String> resourceNames) {
         CompletableFuture<List<Snp.ServiceMappingXdsResponse>> future = new CompletableFuture<>();
-        StreamObserver<DiscoveryRequest> streamObserver = this.aggregatedDiscoveryServiceStub.streamAggregatedResources(new StreamObserver<DiscoveryResponse>() {
-            @Override
-            public void onNext(DiscoveryResponse discoveryResponse) {
-                List<Snp.ServiceMappingXdsResponse> res = decodeDiscoveryResponse(discoveryResponse);
-                System.out.println("snp[inner] once: " + res);
-                future.complete(res);
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                future.completeExceptionally(throwable);
-            }
-
-            @Override
-            public void onCompleted() {
-                // do nothing
-            }
-        });
-        streamObserver.onNext(buildDiscoveryRequest(resourceNames));
+        Consumer<List<Snp.ServiceMappingXdsResponse>> once = (List<Snp.ServiceMappingXdsResponse> newSnps) -> {
+            Optional<Snp.ServiceMappingXdsResponse> snps = newSnps.stream().filter(snp -> resourceNames.contains(snp.getInterfaceName())).findFirst();
+            snps.ifPresent(serviceMappingXdsResponse -> future.complete(Collections.singletonList(serviceMappingXdsResponse)));
+        };
+        this.listeners.add(once);
+        discoveryRequestStreamObserver.onNext(buildDiscoveryRequest(resourceNames));
         try {
-            return future.get();
+            List<Snp.ServiceMappingXdsResponse> serviceMappingXdsResponses = future.get();
+            System.out.println("Get snp resource from xDS server: " + serviceMappingXdsResponses);
+            return serviceMappingXdsResponses;
         } catch (Exception e) {
             throw new RuntimeException(e);
+        } finally {
+            this.listeners.remove(once);
         }
     }
 
     @Override
     public long observeResource(Set<String> resourceNames, Consumer<List<Snp.ServiceMappingXdsResponse>> consumer) {
         this.resourceNames.addAll(resourceNames);
+        this.listeners.add(consumer);
         //sub
         discoveryRequestStreamObserver.onNext(buildDiscoveryRequest(this.resourceNames));
         return 0;
