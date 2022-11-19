@@ -175,16 +175,15 @@ public class PilotExchanger {
         HashSet<String> resources = new HashSet<>(Collections.singletonList(serviceInterface));
         List<Snp.ServiceMappingXdsResponse> snps = snpProtocol.getResource(resources);
         // Observe SNP updated
+        if (listener == null) {
+            return new HashSet<>();
+        }
         snpProtocol.observeResource(resources, (List<Snp.ServiceMappingXdsResponse> newSnps) -> {
             // update local cache
             System.out.println("snps[inner] update: " + newSnps.toString());
-            if (listener != null) {
-                Set<String> newRes = new HashSet<>();
-                if (!newSnps.isEmpty()) {
-                    newRes = new HashSet<>(newSnps.get(0).getApplicationNamesList());
-                }
-                listener.onEvent(new MappingChangedEvent(serviceInterface, newRes));
-            }
+            Set<String> newRes = new HashSet<>();
+            Optional<Snp.ServiceMappingXdsResponse> first = newSnps.stream().filter(i -> serviceInterface.equals(i.getInterfaceName())).findFirst();
+            first.ifPresent(serviceMappingXdsResponse -> listener.onEvent(new MappingChangedEvent(serviceInterface, new HashSet<>(serviceMappingXdsResponse.getApplicationNamesList()))));
         });
         if (snps.isEmpty()) {
             return new HashSet<>();
