@@ -172,7 +172,9 @@ public class PilotExchanger {
     }
 
     public Set<String> snp(String serviceInterface, MappingListener listener) {
-        HashSet<String> resources = new HashSet<>(Collections.singletonList(serviceInterface));
+        HashSet<String> resources = new HashSet<>();
+        resources.add(serviceInterface);
+        resources.add(serviceInterface + "|" + "dubbo-demo-b");
         List<Snp.ServiceMappingXdsResponse> snps = snpProtocol.getResource(resources);
         // Observe SNP updated
         if (listener == null) {

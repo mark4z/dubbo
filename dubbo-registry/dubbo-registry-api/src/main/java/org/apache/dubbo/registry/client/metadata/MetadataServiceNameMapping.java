@@ -33,8 +33,7 @@ import org.apache.dubbo.rpc.model.ProviderModel;
 
 import java.util.*;
 
-import static org.apache.dubbo.common.constants.CommonConstants.COMMA_SEPARATOR;
-import static org.apache.dubbo.common.constants.CommonConstants.DEFAULT_KEY;
+import static org.apache.dubbo.common.constants.CommonConstants.*;
 
 public class MetadataServiceNameMapping extends AbstractServiceNameMapping {
 
